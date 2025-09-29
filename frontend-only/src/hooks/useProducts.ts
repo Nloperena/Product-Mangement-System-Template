@@ -12,6 +12,8 @@ export const useProducts = (filters?: ProductFilters) => {
       setLoading(true);
       setError(null);
       const data = await productApi.getProducts();
+      console.log('🔍 useProducts: Fetched products:', data.length);
+      console.log('🔍 useProducts: Sample product IDs:', data.slice(0, 5).map(p => ({ id: p.id, product_id: p.product_id, name: p.name })));
       setProducts(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch products');
@@ -78,9 +80,12 @@ export const useProduct = (id: string) => {
       try {
         setLoading(true);
         setError(null);
+        console.log('🔍 useProduct: Fetching product with ID:', id);
         const data = await productApi.getProduct(id);
+        console.log('✅ useProduct: Product fetched successfully:', data);
         setProduct(data);
       } catch (err) {
+        console.error('❌ useProduct: Error fetching product:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch product');
       } finally {
         setLoading(false);

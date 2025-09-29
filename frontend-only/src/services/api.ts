@@ -97,6 +97,8 @@ export const productApi = {
   async getProduct(id: string): Promise<Product> {
     const currentUrl = `${getApiBaseUrl()}/api/products/${id}`;
     console.log('🚀 Fetching product:', id, 'from:', currentUrl);
+    console.log('🔍 Product ID type:', typeof id, 'length:', id.length);
+    console.log('🔍 Product ID encoded:', encodeURIComponent(id));
     const response = await api.get<Product>(`/products/${id}`);
     console.log('✅ Product received:', response.data.name);
     return response.data;
