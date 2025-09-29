@@ -59,6 +59,18 @@ This frontend deployment runs in **demo mode** with:
 - All CRUD operations work but don't persist data
 - Image uploads are simulated
 
+## 🔄 API Environment Toggle
+
+The application includes a toggle switch in the header that allows you to switch between:
+- **Local API** (http://localhost:5000) - for local development
+- **Heroku API** - for production testing
+
+The toggle switch:
+- Remembers your preference in localStorage
+- Updates all API calls instantly when switched
+- Shows visual indicators (Server icon for local, Cloud icon for Heroku)
+- Is located in the top-right corner of the header
+
 ## 🔧 Configuration
 
 - **Framework**: React + TypeScript + Vite
@@ -66,6 +78,7 @@ This frontend deployment runs in **demo mode** with:
 - **Routing**: React Router
 - **Build Output**: `dist/` directory
 - **Mock Data**: Located in `src/services/mockData.ts`
+- **API Toggle**: Switch between local and Heroku APIs via header toggle
 
 ## 📁 Project Structure
 
@@ -74,6 +87,10 @@ frontend-only/
 ├── public/              # Static assets
 ├── src/
 │   ├── components/      # React components
+│   │   ├── layout/     # Layout components (Header, Layout)
+│   │   ├── product/    # Product-specific components
+│   │   └── ui/         # Reusable UI components (Button, Card, etc.)
+│   ├── contexts/       # React contexts (ApiContext)
 │   ├── pages/          # Page components
 │   ├── services/       # API and mock data
 │   ├── types/          # TypeScript types

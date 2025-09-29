@@ -41,18 +41,57 @@ export const generateSlug = (text: string): string => {
     .trim();
 };
 
-export const getImageUrl = (imagePath?: string): string => {
+export const getImageUrl = (imagePath?: string, apiBaseUrl?: string, useRelativePath: boolean = false): string => {
   if (!imagePath) return '/placeholder-product.svg';
   
+  // If it's a full URL (Vercel Blob URL or any external URL), return as-is
   if (imagePath.startsWith('http')) {
     return imagePath;
   }
   
-  if (imagePath.startsWith('/')) {
-    return imagePath;
+  // Handle different image path formats from the backend
+  let normalizedPath = imagePath;
+  
+  // Transform /api/images/placeholder/ paths to /product-images/ paths
+  if (imagePath.startsWith('/api/images/placeholder/')) {
+    // Extract the filename from the placeholder path
+    const filename = imagePath.replace('/api/images/placeholder/', '');
+    normalizedPath = `/product-images/${filename}`;
+  }
+  // If the path already starts with /product-images/, use it as-is
+  else if (imagePath.startsWith('/product-images/')) {
+    normalizedPath = imagePath;
+  }
+  // If the path starts with /api/ (but not placeholder), use it as-is
+  else if (imagePath.startsWith('/api/')) {
+    normalizedPath = imagePath;
+  }
+  // Otherwise, assume it's a filename and add the product-images path
+  else {
+    normalizedPath = `/product-images/${imagePath}`;
   }
   
-  return `/product-images/${imagePath}`;
+  // If useRelativePath is true, return just the path without the API base URL
+  if (useRelativePath) {
+    return normalizedPath;
+  }
+  
+  // Use provided API base URL or fallback to environment/default
+  const API_BASE_URL = apiBaseUrl || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  return `${API_BASE_URL}${normalizedPath}`;
+};
+
+// Helper function specifically for product images that handles both types
+export const getProductImageUrl = (product: { image?: string }, apiBaseUrl?: string): string => {
+  if (!product.image) return '/placeholder-product.svg';
+  
+  // If image starts with 'http', it's a Vercel Blob URL - use as-is
+  if (product.image.startsWith('http')) {
+    return product.image;
+  }
+  
+  // For frontend assets, use relative path (not backend URL)
+  return `/product-images/${product.image}`;
 };
 
 export const getBrandColor = (brand: string): string => {

@@ -2,7 +2,8 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { formatBrandName, formatIndustryName, getImageUrl, getBrandTextColor } from '@/utils/formatting';
+import { formatBrandName, formatIndustryName, getImageUrl, getProductImageUrl, getBrandTextColor } from '@/utils/formatting';
+import { useApi } from '@/contexts/ApiContext';
 import { Eye, Edit, ExternalLink, Package } from 'lucide-react';
 import type { Product } from '@/types/product';
 
@@ -13,8 +14,16 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onView }) => {
-  const imageUrl = getImageUrl(product.image);
+  const { apiBaseUrl } = useApi();
+  const imageUrl = getProductImageUrl(product, apiBaseUrl);
   const brandColor = getBrandTextColor(product.brand);
+  
+  // Debug logging
+  console.log(`🔍 ProductCard Debug - ${product.name}:`);
+  console.log(`  Original image path: ${product.image}`);
+  console.log(`  Generated image URL: ${imageUrl}`);
+  console.log(`  Image type: ${product.image?.startsWith('http') ? 'Vercel Blob URL' : 'Frontend Asset'}`);
+  console.log(`  Product brand: ${product.brand}`);
 
   return (
     <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
@@ -50,8 +59,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onView }) =>
             <img
               src={imageUrl}
               alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+              className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
+              onLoad={() => {
+                console.log(`✅ Image loaded successfully: ${imageUrl}`);
+              }}
               onError={(e) => {
+                console.log(`❌ Image failed to load: ${imageUrl}`);
+                console.log(`Error event:`, e);
                 const target = e.target as HTMLImageElement;
                 target.src = '/placeholder-product.svg';
               }}

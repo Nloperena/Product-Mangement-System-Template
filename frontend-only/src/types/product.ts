@@ -1,6 +1,7 @@
 export interface TechnicalProperty {
   property: string;
   value: string;
+  unit?: string;
 }
 
 export interface Product {

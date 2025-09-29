@@ -1,80 +1,116 @@
+import axios from 'axios';
 import type { Product, ProductStats, BrandIndustryCounts, ProductFormData } from '@/types/product';
-import { mockProducts, mockStats, mockBrandIndustryCounts, mockImages } from './mockData';
 
-// Frontend-only deployment using mock data
-const IS_DEMO_MODE = true;
+// Default API base URL
+const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-// Simulate API delay for realistic demo experience
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Create a function to get the current API base URL
+let currentApiBase = DEFAULT_API_BASE;
+
+export const setApiBaseUrl = (baseUrl: string) => {
+  currentApiBase = baseUrl;
+  // Update the axios instance base URL
+  api.defaults.baseURL = `${baseUrl}/api`;
+};
+
+export const getApiBaseUrl = () => {
+  // Ensure we always return a valid base URL
+  return currentApiBase || DEFAULT_API_BASE;
+};
+
+// Create axios instance with default base URL
+const api = axios.create({
+  baseURL: `${DEFAULT_API_BASE}/api`,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true, // Important for CORS with credentials
+  timeout: 30000, // 30 second timeout for Heroku cold starts
+});
+
+// Add response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error);
+    
+    // If it's a timeout error, suggest the user to wait
+    if (error.code === 'ECONNABORTED') {
+      console.log('⏰ Request timed out - Heroku app might be starting up. Please wait and try again.');
+    }
+    
+    throw error;
+  }
+);
+
+// Helper function to retry requests for cold starts
+const retryRequest = async (requestFn: () => Promise<any>, maxRetries = 2): Promise<any> => {
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await requestFn();
+    } catch (error: any) {
+      if (error.code === 'ECONNABORTED' && i < maxRetries) {
+        console.log(`⏰ Timeout on attempt ${i + 1}/${maxRetries + 1}. Retrying in 3 seconds...`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        continue;
+      }
+      throw error;
+    }
+  }
+};
 
 export const productApi = {
   // Get all products
   async getProducts(): Promise<Product[]> {
-    if (IS_DEMO_MODE) {
-      await delay(500); // Simulate network delay
-      return [...mockProducts];
+    const currentUrl = `${getApiBaseUrl()}/api/products`;
+    console.log('🚀 Fetching products from:', currentUrl);
+    try {
+      const response = await retryRequest(() => api.get<Product[]>('/products'));
+      console.log('✅ Products received:', response.data.length, 'products');
+      
+      // Debug first few products
+      if (response.data.length > 0) {
+        console.log('🔍 Sample product data:');
+        console.log('  First product:', response.data[0]);
+        console.log('  Image path:', response.data[0].image);
+        console.log('  Backend base URL:', getApiBaseUrl());
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('❌ Error fetching products:', error);
+      if (error instanceof Error) {
+        console.error('  Error message:', error.message);
+      }
+      throw error;
     }
-    // Real API call would go here
-    throw new Error('Backend API not available in demo mode');
   },
 
   // Get product by ID
   async getProduct(id: string): Promise<Product> {
-    if (IS_DEMO_MODE) {
-      await delay(300);
-      const product = mockProducts.find(p => p.id === id);
-      if (!product) {
-        throw new Error('Product not found');
-      }
-      return { ...product };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const currentUrl = `${getApiBaseUrl()}/api/products/${id}`;
+    console.log('🚀 Fetching product:', id, 'from:', currentUrl);
+    const response = await api.get<Product>(`/products/${id}`);
+    console.log('✅ Product received:', response.data.name);
+    return response.data;
   },
 
   // Create new product
   async createProduct(productData: ProductFormData): Promise<{ success: boolean; message: string; product_id?: string }> {
-    if (IS_DEMO_MODE) {
-      await delay(800);
-      // In demo mode, we simulate success but don't actually persist data
-      return {
-        success: true,
-        message: 'Product created successfully (Demo Mode - changes not persisted)',
-        product_id: Math.random().toString(36).substr(2, 9)
-      };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const response = await api.post('/products', productData);
+    return response.data;
   },
 
   // Update product
   async updateProduct(id: string, productData: Partial<ProductFormData>): Promise<{ success: boolean; message: string }> {
-    if (IS_DEMO_MODE) {
-      await delay(600);
-      const productExists = mockProducts.some(p => p.id === id);
-      if (!productExists) {
-        throw new Error('Product not found');
-      }
-      return {
-        success: true,
-        message: 'Product updated successfully (Demo Mode - changes not persisted)'
-      };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const response = await api.put(`/products/${id}`, productData);
+    return response.data;
   },
 
   // Delete product
   async deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
-    if (IS_DEMO_MODE) {
-      await delay(400);
-      const productExists = mockProducts.some(p => p.id === id);
-      if (!productExists) {
-        throw new Error('Product not found');
-      }
-      return {
-        success: true,
-        message: 'Product deleted successfully (Demo Mode - changes not persisted)'
-      };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const response = await api.delete(`/products/${id}`);
+    return response.data;
   },
 
   // Get statistics
@@ -82,14 +118,11 @@ export const productApi = {
     metadata: ProductStats;
     brand_industry_counts: BrandIndustryCounts;
   }> {
-    if (IS_DEMO_MODE) {
-      await delay(400);
-      return {
-        metadata: { ...mockStats },
-        brand_industry_counts: { ...mockBrandIndustryCounts }
-      };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const currentUrl = `${getApiBaseUrl()}/api/statistics`;
+    console.log('🚀 Fetching statistics from:', currentUrl);
+    const response = await retryRequest(() => api.get('/statistics'));
+    console.log('✅ Statistics received:', response.data);
+    return response.data;
   },
 
   // Get available images
@@ -98,11 +131,8 @@ export const productApi = {
     path: string;
     size: number;
   }>> {
-    if (IS_DEMO_MODE) {
-      await delay(300);
-      return [...mockImages];
-    }
-    throw new Error('Backend API not available in demo mode');
+    const response = await api.get('/images');
+    return response.data;
   },
 
   // Upload image
@@ -112,16 +142,34 @@ export const productApi = {
     filename?: string;
     filepath?: string;
   }> {
-    if (IS_DEMO_MODE) {
-      await delay(1000);
-      return {
-        success: true,
-        message: 'Image uploaded successfully (Demo Mode - not actually uploaded)',
-        filename: file.name,
-        filepath: '/placeholder-product.svg'
-      };
-    }
-    throw new Error('Backend API not available in demo mode');
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    const response = await api.post('/images/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
+  },
+
+  // Upload image to Vercel Blob (alternative endpoint)
+  async uploadImageToBlob(file: File): Promise<{
+    success: boolean;
+    message: string;
+    url?: string;
+  }> {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    const response = await api.post('/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
   },
 };
 

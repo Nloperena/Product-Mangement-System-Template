@@ -3,10 +3,11 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProduct } from '@/hooks/useProducts';
 import { productApi } from '@/services/api';
 import { useToast } from '@/components/ui/ToastContainer';
+import { useApi } from '@/contexts/ApiContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { formatBrandName, formatIndustryName, getImageUrl, getBrandTextColor } from '@/utils/formatting';
+import { formatBrandName, formatIndustryName, getImageUrl, getProductImageUrl, getBrandTextColor } from '@/utils/formatting';
 import { 
   ArrowLeft, 
   Edit, 
@@ -74,7 +75,8 @@ const ProductViewPage: React.FC = () => {
     );
   }
 
-  const imageUrl = getImageUrl(product.image);
+  const { apiBaseUrl } = useApi();
+  const imageUrl = getProductImageUrl(product, apiBaseUrl);
   const brandColor = getBrandTextColor(product.brand);
 
   return (

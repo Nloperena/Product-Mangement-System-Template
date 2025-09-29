@@ -3,11 +3,13 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useProduct } from '@/hooks/useProducts';
 import { productApi } from '@/services/api';
 import { useToast } from '@/components/ui/ToastContainer';
+import { useApi } from '@/contexts/ApiContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { getImageUrl } from '@/utils/formatting';
+import { getImageUrl, getProductImageUrl } from '@/utils/formatting';
+import ImageUpload from '@/components/ui/ImageUpload';
 import { 
   ArrowLeft, 
   Save, 
@@ -26,6 +28,7 @@ const ProductEditPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
+  const { apiBaseUrl } = useApi();
   const isNewProduct = id === 'new';
   const { product, loading, error } = useProduct(isNewProduct ? '' : id || '');
   
@@ -69,8 +72,15 @@ const ProductEditPage: React.FC = () => {
   // Load product data when component mounts
   useEffect(() => {
     if (!isNewProduct && product) {
+      const productId = product.product_id || product.id || id || '';
+      console.log('🔍 ProductEditPage Debug:');
+      console.log('  URL id:', id);
+      console.log('  product.product_id:', product.product_id);
+      console.log('  product.id:', product.id);
+      console.log('  Final productId:', productId);
+      
       setFormData({
-        product_id: product.product_id || product.id,
+        product_id: productId,
         full_name: product.full_name || product.name,
         description: product.description || '',
         url: product.url || '',
@@ -84,7 +94,7 @@ const ProductEditPage: React.FC = () => {
         technical: [...product.technical],
       });
     }
-  }, [product, isNewProduct]);
+  }, [product, isNewProduct, id]);
 
   // Load available images
   useEffect(() => {
@@ -214,9 +224,13 @@ const ProductEditPage: React.FC = () => {
           navigate(`/products/${result.product_id}`);
         }
       } else {
-        await productApi.updateProduct(id!, formData);
+        const productId = formData.product_id || id;
+        if (!productId) {
+          throw new Error('Product ID is required for updates');
+        }
+        await productApi.updateProduct(productId, formData);
         showSuccess('Product Updated', `"${formData.full_name}" has been updated successfully!`);
-        navigate(`/products/${id}`);
+        navigate(`/products/${productId}`);
       }
     } catch (error) {
       console.error('Failed to save product:', error);
@@ -253,7 +267,7 @@ const ProductEditPage: React.FC = () => {
     );
   }
 
-  const imageUrl = getImageUrl(formData.image);
+  const imageUrl = getProductImageUrl({ image: formData.image }, apiBaseUrl);
 
   return (
     <div className="space-y-6">
@@ -588,72 +602,18 @@ const ProductEditPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Current Image Preview */}
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                {formData.image ? (
-                  <img
-                    src={imageUrl}
-                    alt="Product"
-                    className="max-w-full max-h-full object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder-product.svg';
-                    }}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center text-gray-400">
-                    <Package className="h-12 w-12 mb-2" />
-                    <span className="text-sm">No Image</span>
-                  </div>
-                )}
-              </div>
+              <ImageUpload
+                onImageUpload={(url) => handleInputChange('image', url)}
+                currentImage={formData.image ? imageUrl : undefined}
+              />
 
-              {/* Image Upload */}
-              <div className="space-y-2">
-                <label className="block">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    disabled={uploadingImage}
-                  />
-                  <Button
-                    variant="outline"
-                    className="w-full gap-2"
-                    disabled={uploadingImage}
-                    onClick={() => {
-                      const input = document.querySelector('input[type="file"]') as HTMLInputElement;
-                      input?.click();
-                    }}
-                  >
-                    {uploadingImage ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Upload className="h-4 w-4" />
-                    )}
-                    {uploadingImage ? 'Uploading...' : 'Upload Image'}
-                  </Button>
-                </label>
-
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setShowImagePicker(true)}
-                >
-                  Choose Existing Image
-                </Button>
-
-                {formData.image && (
-                  <Button
-                    variant="outline"
-                    className="w-full text-red-600 hover:bg-red-50"
-                    onClick={() => handleInputChange('image', '')}
-                  >
-                    Remove Image
-                  </Button>
-                )}
-              </div>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowImagePicker(true)}
+              >
+                Choose Existing Image
+              </Button>
 
               {formData.image && (
                 <div className="text-xs text-gray-500">
@@ -741,7 +701,7 @@ const ProductEditPage: React.FC = () => {
                       className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden hover:ring-2 hover:ring-primary-500"
                     >
                       <img
-                        src={getImageUrl(image.filename)}
+                        src={getImageUrl(image.filename, apiBaseUrl)}
                         alt={image.filename}
                         className="w-full h-full object-cover"
                       />
