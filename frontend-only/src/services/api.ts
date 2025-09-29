@@ -1,10 +1,13 @@
 import axios from 'axios';
 import type { Product, ProductStats, BrandIndustryCounts, ProductFormData } from '@/types/product';
 
-// Default API base URL - but this will be overridden by context
-const DEFAULT_API_BASE = 'http://localhost:5000';
+// Default API base URL - use Heroku in production, localhost in development
+const DEFAULT_API_BASE = import.meta.env.PROD 
+  ? 'https://forza-product-managementsystem-b7c3ff8d3d2d.herokuapp.com'
+  : 'http://localhost:5000';
 console.log('🔧 API Service: Environment VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
 console.log('🔧 API Service: Using DEFAULT_API_BASE:', DEFAULT_API_BASE);
+console.log('🔧 API Service: Production mode:', import.meta.env.PROD);
 
 // Create a function to get the current API base URL
 let currentApiBase = DEFAULT_API_BASE;

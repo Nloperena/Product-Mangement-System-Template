@@ -77,7 +77,9 @@ export const getImageUrl = (imagePath?: string, apiBaseUrl?: string, useRelative
   }
   
   // Use provided API base URL or fallback to default
-  const API_BASE_URL = apiBaseUrl || 'http://localhost:5000';
+  const API_BASE_URL = apiBaseUrl || (import.meta.env.PROD 
+    ? 'https://forza-product-managementsystem-b7c3ff8d3d2d.herokuapp.com'
+    : 'http://localhost:5000');
   return `${API_BASE_URL}${normalizedPath}`;
 };
 
