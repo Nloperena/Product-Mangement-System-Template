@@ -701,7 +701,7 @@ const ProductEditPage: React.FC = () => {
                       className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden hover:ring-2 hover:ring-primary-500"
                     >
                       <img
-                        src={getImageUrl(image.filename, apiBaseUrl)}
+                        src={getProductImageUrl({ image: image.filename }, apiBaseUrl)}
                         alt={image.filename}
                         className="w-full h-full object-cover"
                       />

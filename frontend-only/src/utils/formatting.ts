@@ -87,11 +87,14 @@ export const getProductImageUrl = (product: { image?: string }, apiBaseUrl?: str
   
   // If image starts with 'http', it's a Vercel Blob URL - use as-is
   if (product.image.startsWith('http')) {
+    console.log('🖼️ Image: Using Vercel Blob URL:', product.image);
     return product.image;
   }
   
   // For frontend assets, use relative path (not backend URL)
-  return `/product-images/${product.image}`;
+  const imageUrl = `/product-images/${product.image}`;
+  console.log('🖼️ Image: Using frontend asset:', imageUrl);
+  return imageUrl;
 };
 
 export const getBrandColor = (brand: string): string => {
