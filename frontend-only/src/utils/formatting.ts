@@ -76,8 +76,8 @@ export const getImageUrl = (imagePath?: string, apiBaseUrl?: string, useRelative
     return normalizedPath;
   }
   
-  // Use provided API base URL or fallback to environment/default
-  const API_BASE_URL = apiBaseUrl || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  // Use provided API base URL or fallback to default
+  const API_BASE_URL = apiBaseUrl || 'http://localhost:5000';
   return `${API_BASE_URL}${normalizedPath}`;
 };
 

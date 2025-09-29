@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type { Product, ProductStats, BrandIndustryCounts, ProductFormData } from '@/types/product';
 
-// Default API base URL
-const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+// Default API base URL - but this will be overridden by context
+const DEFAULT_API_BASE = 'http://localhost:5000';
 console.log('🔧 API Service: Environment VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
 console.log('🔧 API Service: Using DEFAULT_API_BASE:', DEFAULT_API_BASE);
 
@@ -21,6 +21,7 @@ export const getApiBaseUrl = () => {
   // Always prioritize the context-set URL over environment variable
   console.log('🔧 API Service: getApiBaseUrl - currentApiBase:', currentApiBase);
   console.log('🔧 API Service: getApiBaseUrl - DEFAULT_API_BASE:', DEFAULT_API_BASE);
+  console.log('🔧 API Service: getApiBaseUrl - axios baseURL:', api.defaults.baseURL);
   return currentApiBase || DEFAULT_API_BASE;
 };
 
