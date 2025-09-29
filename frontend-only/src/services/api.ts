@@ -3,18 +3,24 @@ import type { Product, ProductStats, BrandIndustryCounts, ProductFormData } from
 
 // Default API base URL
 const DEFAULT_API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+console.log('🔧 API Service: Environment VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
+console.log('🔧 API Service: Using DEFAULT_API_BASE:', DEFAULT_API_BASE);
 
 // Create a function to get the current API base URL
 let currentApiBase = DEFAULT_API_BASE;
 
 export const setApiBaseUrl = (baseUrl: string) => {
+  console.log('🔧 API Service: Setting base URL to:', baseUrl);
   currentApiBase = baseUrl;
   // Update the axios instance base URL
   api.defaults.baseURL = `${baseUrl}/api`;
+  console.log('🔧 API Service: Axios base URL set to:', api.defaults.baseURL);
 };
 
 export const getApiBaseUrl = () => {
-  // Ensure we always return a valid base URL
+  // Always prioritize the context-set URL over environment variable
+  console.log('🔧 API Service: getApiBaseUrl - currentApiBase:', currentApiBase);
+  console.log('🔧 API Service: getApiBaseUrl - DEFAULT_API_BASE:', DEFAULT_API_BASE);
   return currentApiBase || DEFAULT_API_BASE;
 };
 

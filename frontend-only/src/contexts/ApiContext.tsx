@@ -20,13 +20,18 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [environment, setEnvironment] = useState<ApiEnvironment>(() => {
     // Check localStorage for saved preference
     const saved = localStorage.getItem('api-environment');
-    return (saved as ApiEnvironment) || 'local';
+    if (saved) {
+      return saved as ApiEnvironment;
+    }
+    // Default to 'heroku' in production, 'local' in development
+    return import.meta.env.PROD ? 'heroku' : 'local';
   });
 
   const apiBaseUrl = API_URLS[environment];
 
   // Update API base URL immediately when component mounts and when environment changes
   useEffect(() => {
+    console.log('🔧 ApiContext: Setting API base URL to:', apiBaseUrl);
     setApiBaseUrl(apiBaseUrl);
   }, [apiBaseUrl]);
 
