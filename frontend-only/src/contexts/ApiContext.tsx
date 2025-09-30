@@ -23,8 +23,8 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (saved) {
       return saved as ApiEnvironment;
     }
-    // Default to 'heroku' in production, 'local' in development
-    return import.meta.env.PROD ? 'heroku' : 'local';
+    // Default to 'heroku' (API) for both production and development
+    return 'heroku';
   });
 
   const apiBaseUrl = API_URLS[environment];

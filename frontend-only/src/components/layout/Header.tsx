@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
-import ApiToggle from '@/components/ui/ApiToggle';
+// import ApiToggle from '@/components/ui/ApiToggle';
 import { Package, Plus, BarChart3, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
@@ -52,7 +52,7 @@ const Header: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
-            <ApiToggle />
+            {/* <ApiToggle /> */}
             <Link to="/products/new">
               <Button size="sm" className="gap-2">
                 <Plus className="h-4 w-4" />
