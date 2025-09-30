@@ -4,6 +4,7 @@ import { useProduct } from '@/hooks/useProducts';
 import { productApi } from '@/services/api';
 import { useToast } from '@/components/ui/ToastContainer';
 import { useApi } from '@/contexts/ApiContext';
+import { useGuest } from '@/contexts/GuestContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -27,6 +28,7 @@ const ProductViewPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
+  const { isGuest } = useGuest();
   const { product, loading, error } = useProduct(id || '');
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -130,21 +132,25 @@ const ProductViewPage: React.FC = () => {
               </Button>
             </a>
           )}
-          <Link to={`/products/${id}/edit`}>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Edit className="h-4 w-4" />
-              Edit
-            </Button>
-          </Link>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setShowDeleteConfirm(true)}
-            className="gap-2"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </Button>
+          {!isGuest && (
+            <>
+              <Link to={`/products/${id}/edit`}>
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+              </Link>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
@@ -385,12 +391,14 @@ const ProductViewPage: React.FC = () => {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Link to={`/products/${id}/edit`}>
-                <Button className="w-full gap-2">
-                  <Edit className="h-4 w-4" />
-                  Edit Product
-                </Button>
-              </Link>
+              {!isGuest && (
+                <Link to={`/products/${id}/edit`}>
+                  <Button className="w-full gap-2">
+                    <Edit className="h-4 w-4" />
+                    Edit Product
+                  </Button>
+                </Link>
+              )}
               
               {product.url && (
                 <a
@@ -406,14 +414,16 @@ const ProductViewPage: React.FC = () => {
                 </a>
               )}
               
-              <Button
-                variant="destructive"
-                className="w-full gap-2"
-                onClick={() => setShowDeleteConfirm(true)}
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete Product
-              </Button>
+              {!isGuest && (
+                <Button
+                  variant="destructive"
+                  className="w-full gap-2"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Product
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
