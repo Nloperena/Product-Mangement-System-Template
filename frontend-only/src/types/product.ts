@@ -65,4 +65,6 @@ export interface ProductFormData {
   benefits: string[];
   applications: string[];
   technical: TechnicalProperty[];
+  sizing?: Record<string, any>;
+  packaging?: string[];
 }

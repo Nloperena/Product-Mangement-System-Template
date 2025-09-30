@@ -262,6 +262,58 @@ const ProductViewPage: React.FC = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Sizing Information */}
+          {product.sizing && Object.keys(product.sizing).length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Sizing Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-200">
+                        <th className="text-left py-3 px-4 font-medium text-gray-900">Dimension</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-900">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(product.sizing).map(([key, value], index) => (
+                        <tr key={index} className="border-b border-gray-100">
+                          <td className="py-3 px-4 text-gray-700 font-medium capitalize">
+                            {key.replace(/_/g, ' ')}
+                          </td>
+                          <td className="py-3 px-4 text-gray-600">
+                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Packaging Information */}
+          {product.packaging && product.packaging.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Packaging Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {product.packaging.map((item, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                      <span className="text-gray-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Sidebar */}

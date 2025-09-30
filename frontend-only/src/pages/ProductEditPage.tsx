@@ -45,6 +45,8 @@ const ProductEditPage: React.FC = () => {
     benefits: [],
     applications: [],
     technical: [],
+    sizing: {},
+    packaging: [],
   });
 
   const [saving, setSaving] = useState(false);
@@ -92,6 +94,8 @@ const ProductEditPage: React.FC = () => {
         benefits: [...product.benefits],
         applications: [...product.applications],
         technical: [...product.technical],
+        sizing: product.sizing ? { ...product.sizing } : {},
+        packaging: product.packaging ? [...product.packaging] : [],
       });
     }
   }, [product, isNewProduct, id]);
@@ -185,6 +189,59 @@ const ProductEditPage: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       technical: prev.technical.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handlePackagingAdd = () => {
+    setFormData(prev => ({
+      ...prev,
+      packaging: [...prev.packaging, '']
+    }));
+  };
+
+  const handlePackagingUpdate = (index: number, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      packaging: prev.packaging.map((item, i) => i === index ? value : item)
+    }));
+  };
+
+  const handlePackagingRemove = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      packaging: prev.packaging.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSizingUpdate = (key: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      sizing: {
+        ...prev.sizing,
+        [key]: value
+      }
+    }));
+  };
+
+  const handleSizingRemove = (key: string) => {
+    setFormData(prev => {
+      const newSizing = { ...prev.sizing };
+      delete newSizing[key];
+      return {
+        ...prev,
+        sizing: newSizing
+      };
+    });
+  };
+
+  const handleSizingAdd = () => {
+    const newKey = `dimension_${Object.keys(formData.sizing || {}).length + 1}`;
+    setFormData(prev => ({
+      ...prev,
+      sizing: {
+        ...prev.sizing,
+        [newKey]: ''
+      }
     }));
   };
 
@@ -585,6 +642,106 @@ const ProductEditPage: React.FC = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => handleTechnicalRemove(index)}
+                        className="p-2 text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Sizing Information */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Sizing Information ({Object.keys(formData.sizing || {}).length})</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSizingAdd}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Dimension
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {Object.keys(formData.sizing || {}).length === 0 ? (
+                <p className="text-gray-500 text-center py-4">
+                  No sizing information added yet. Click "Add Dimension" to get started.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {Object.entries(formData.sizing || {}).map(([key, value], index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        value={key}
+                        onChange={(e) => {
+                          const newKey = e.target.value;
+                          const newSizing = { ...formData.sizing };
+                          delete newSizing[key];
+                          newSizing[newKey] = value;
+                          setFormData(prev => ({ ...prev, sizing: newSizing }));
+                        }}
+                        placeholder="Dimension name (e.g., length, width, height)"
+                        className="flex-1"
+                      />
+                      <Input
+                        value={String(value)}
+                        onChange={(e) => handleSizingUpdate(key, e.target.value)}
+                        placeholder="Value"
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleSizingRemove(key)}
+                        className="p-2 text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Packaging Information */}
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Packaging Information ({formData.packaging.length})</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePackagingAdd}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Packaging
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {formData.packaging.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">
+                  No packaging information added yet. Click "Add Packaging" to get started.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {formData.packaging.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input
+                        value={item}
+                        onChange={(e) => handlePackagingUpdate(index, e.target.value)}
+                        placeholder="Packaging description"
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePackagingRemove(index)}
                         className="p-2 text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
