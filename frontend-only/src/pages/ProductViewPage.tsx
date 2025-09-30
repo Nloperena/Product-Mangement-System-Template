@@ -274,18 +274,19 @@ const ProductViewPage: React.FC = () => {
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-gray-200">
-                        <th className="text-left py-3 px-4 font-medium text-gray-900">Dimension</th>
-                        <th className="text-left py-3 px-4 font-medium text-gray-900">Value</th>
+                        <th className="text-left py-3 px-4 font-medium text-gray-900">Sizings</th>
                       </tr>
                     </thead>
                     <tbody>
                       {Object.entries(product.sizing).map(([key, value], index) => (
                         <tr key={index} className="border-b border-gray-100">
-                          <td className="py-3 px-4 text-gray-700 font-medium capitalize">
-                            {key.replace(/_/g, ' ')}
-                          </td>
-                          <td className="py-3 px-4 text-gray-600">
-                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                          <td className="py-3 px-4">
+                            <div className="font-medium text-gray-900 capitalize">
+                              {key.replace(/_/g, ' ')}
+                            </div>
+                            <div className="text-gray-600 mt-1">
+                              {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                            </div>
                           </td>
                         </tr>
                       ))}
