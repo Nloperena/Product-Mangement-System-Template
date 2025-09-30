@@ -93,9 +93,14 @@ export const getProductImageUrl = (product: { image?: string }, apiBaseUrl?: str
     return product.image;
   }
   
-  // For frontend assets, use relative path (not backend URL)
-  const imageUrl = `/product-images/${product.image}`;
-  console.log('🖼️ Image: Using frontend asset:', imageUrl);
+  // For backend images, construct the full URL using the API base URL
+  const API_BASE_URL = apiBaseUrl || (import.meta.env.PROD 
+    ? 'https://forza-product-managementsystem-b7c3ff8d3d2d.herokuapp.com'
+    : 'http://localhost:5000');
+  const imageUrl = `${API_BASE_URL}/product-images/${product.image}`;
+  console.log('🖼️ Image: Using backend URL:', imageUrl);
+  console.log('🖼️ Image: API Base URL:', API_BASE_URL);
+  console.log('🖼️ Image: Product image filename:', product.image);
   return imageUrl;
 };
 
