@@ -89,7 +89,6 @@ export const getProductImageUrl = (product: { image?: string }, apiBaseUrl?: str
   
   // If image starts with 'http', it's a Vercel Blob URL - use as-is
   if (product.image.startsWith('http')) {
-    console.log('🖼️ Image: Using Vercel Blob URL:', product.image);
     return product.image;
   }
   
@@ -98,9 +97,6 @@ export const getProductImageUrl = (product: { image?: string }, apiBaseUrl?: str
     ? 'https://forza-product-managementsystem-b7c3ff8d3d2d.herokuapp.com'
     : 'http://localhost:5000');
   const imageUrl = `${API_BASE_URL}/product-images/${product.image}`;
-  console.log('🖼️ Image: Using backend URL:', imageUrl);
-  console.log('🖼️ Image: API Base URL:', API_BASE_URL);
-  console.log('🖼️ Image: Product image filename:', product.image);
   return imageUrl;
 };
 

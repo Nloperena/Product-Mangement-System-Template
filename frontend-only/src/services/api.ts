@@ -5,26 +5,18 @@ import type { Product, ProductStats, BrandIndustryCounts, ProductFormData } from
 const DEFAULT_API_BASE = import.meta.env.PROD 
   ? 'https://forza-product-managementsystem-b7c3ff8d3d2d.herokuapp.com'
   : 'http://localhost:5000';
-console.log('🔧 API Service: Environment VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
-console.log('🔧 API Service: Using DEFAULT_API_BASE:', DEFAULT_API_BASE);
-console.log('🔧 API Service: Production mode:', import.meta.env.PROD);
 
 // Create a function to get the current API base URL
 let currentApiBase = DEFAULT_API_BASE;
 
 export const setApiBaseUrl = (baseUrl: string) => {
-  console.log('🔧 API Service: Setting base URL to:', baseUrl);
   currentApiBase = baseUrl;
   // Update the axios instance base URL
   api.defaults.baseURL = `${baseUrl}/api`;
-  console.log('🔧 API Service: Axios base URL set to:', api.defaults.baseURL);
 };
 
 export const getApiBaseUrl = () => {
   // Always prioritize the context-set URL over environment variable
-  console.log('🔧 API Service: getApiBaseUrl - currentApiBase:', currentApiBase);
-  console.log('🔧 API Service: getApiBaseUrl - DEFAULT_API_BASE:', DEFAULT_API_BASE);
-  console.log('🔧 API Service: getApiBaseUrl - axios baseURL:', api.defaults.baseURL);
   return currentApiBase || DEFAULT_API_BASE;
 };
 
@@ -72,38 +64,18 @@ const retryRequest = async (requestFn: () => Promise<any>, maxRetries = 2): Prom
 export const productApi = {
   // Get all products
   async getProducts(): Promise<Product[]> {
-    const currentUrl = `${getApiBaseUrl()}/api/products`;
-    console.log('🚀 Fetching products from:', currentUrl);
     try {
       const response = await retryRequest(() => api.get<Product[]>('/products'));
-      console.log('✅ Products received:', response.data.length, 'products');
-      
-      // Debug first few products
-      if (response.data.length > 0) {
-        console.log('🔍 Sample product data:');
-        console.log('  First product:', response.data[0]);
-        console.log('  Image path:', response.data[0].image);
-        console.log('  Backend base URL:', getApiBaseUrl());
-      }
-      
       return response.data;
     } catch (error) {
-      console.error('❌ Error fetching products:', error);
-      if (error instanceof Error) {
-        console.error('  Error message:', error.message);
-      }
+      console.error('Error fetching products:', error);
       throw error;
     }
   },
 
   // Get product by ID
   async getProduct(id: string): Promise<Product> {
-    const currentUrl = `${getApiBaseUrl()}/api/products/${id}`;
-    console.log('🚀 Fetching product:', id, 'from:', currentUrl);
-    console.log('🔍 Product ID type:', typeof id, 'length:', id.length);
-    console.log('🔍 Product ID encoded:', encodeURIComponent(id));
     const response = await api.get<Product>(`/products/${id}`);
-    console.log('✅ Product received:', response.data.name);
     return response.data;
   },
 
@@ -130,10 +102,7 @@ export const productApi = {
     metadata: ProductStats;
     brand_industry_counts: BrandIndustryCounts;
   }> {
-    const currentUrl = `${getApiBaseUrl()}/api/statistics`;
-    console.log('🚀 Fetching statistics from:', currentUrl);
     const response = await retryRequest(() => api.get('/statistics'));
-    console.log('✅ Statistics received:', response.data);
     return response.data;
   },
 

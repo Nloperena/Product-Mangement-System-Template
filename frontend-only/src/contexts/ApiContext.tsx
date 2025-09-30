@@ -31,8 +31,6 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Update API base URL immediately when component mounts and when environment changes
   useEffect(() => {
-    console.log('🔧 ApiContext: Setting API base URL to:', apiBaseUrl);
-    console.log('🔧 ApiContext: Environment:', environment);
     setApiBaseUrl(apiBaseUrl);
   }, [apiBaseUrl, environment]);
 
