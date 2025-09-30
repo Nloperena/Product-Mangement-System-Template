@@ -168,11 +168,11 @@ const ProductEditPage: React.FC = () => {
   const handleTechnicalAdd = () => {
     setFormData(prev => ({
       ...prev,
-      technical: [...prev.technical, { property: '', value: '' }]
+      technical: [...prev.technical, { property: '', value: '', unit: '' }]
     }));
   };
 
-  const handleTechnicalUpdate = (index: number, field: 'property' | 'value', value: string) => {
+  const handleTechnicalUpdate = (index: number, field: 'property' | 'value' | 'unit', value: string) => {
     setFormData(prev => ({
       ...prev,
       technical: prev.technical.map((item, i) => 
@@ -574,6 +574,12 @@ const ProductEditPage: React.FC = () => {
                         onChange={(e) => handleTechnicalUpdate(index, 'value', e.target.value)}
                         placeholder="Property value"
                         className="flex-1"
+                      />
+                      <Input
+                        value={tech.unit || ''}
+                        onChange={(e) => handleTechnicalUpdate(index, 'unit', e.target.value)}
+                        placeholder="Unit (optional)"
+                        className="w-24"
                       />
                       <Button
                         variant="outline"

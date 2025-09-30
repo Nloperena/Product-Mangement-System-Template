@@ -250,7 +250,10 @@ const ProductViewPage: React.FC = () => {
                       {product.technical.map((tech, index) => (
                         <tr key={index} className="border-b border-gray-100">
                           <td className="py-3 px-4 text-gray-700 font-medium">{tech.property}</td>
-                          <td className="py-3 px-4 text-gray-600">{tech.value}</td>
+                          <td className="py-3 px-4 text-gray-600">
+                            {tech.value}
+                            {tech.unit && <span className="text-gray-500 ml-1">({tech.unit})</span>}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
