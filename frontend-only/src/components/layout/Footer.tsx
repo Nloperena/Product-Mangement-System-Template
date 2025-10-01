@@ -72,9 +72,14 @@ const Footer: React.FC = () => {
             <p>
               © {currentYear} Forza Products. All rights reserved.
             </p>
-            <p className="flex items-center gap-1">
-              Made with <Heart className="h-4 w-4 text-red-500 fill-current" /> from the marketing team
-            </p>
+            <div className="flex flex-col items-center sm:items-end gap-1">
+              <p className="flex items-center gap-1">
+                Made with <Heart className="h-4 w-4 text-red-500 fill-current" /> from the marketing team
+              </p>
+              <p className="text-xs text-gray-500 text-center sm:text-right">
+                Questions or feedback? Contact Nico Loperena on Microsoft Teams
+              </p>
+            </div>
           </div>
         </div>
       </div>
