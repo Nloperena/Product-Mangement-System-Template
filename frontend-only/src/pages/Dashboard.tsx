@@ -77,6 +77,35 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {/* Alpha Preview Banner */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="flex-shrink-0">
+              <img 
+                src="/forza-logo-blue.svg" 
+                alt="Forza Logo" 
+                className="h-16 w-auto"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-xl font-bold text-gray-900">
+                  Forza Product Management System
+                </h2>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-700 border-blue-200">
+                  Alpha Preview
+                </Badge>
+              </div>
+              <p className="text-gray-700">
+                Welcome to the Forza Product Management System alpha test environment. 
+                You're currently viewing a live preview of our comprehensive product catalog with full access to browse, explore, and manage product information.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
