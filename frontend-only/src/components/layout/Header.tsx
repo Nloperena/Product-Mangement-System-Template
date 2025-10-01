@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Package, Plus, BarChart3, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
