@@ -22,7 +22,7 @@ const ProductsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBrand, setSelectedBrand] = useState<string>('');
   const [selectedIndustry, setSelectedIndustry] = useState<string>('');
-  const [showPublishedOnly, setShowPublishedOnly] = useState<boolean | undefined>(undefined);
+  const [showDrafts, setShowDrafts] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -30,8 +30,8 @@ const ProductsPage: React.FC = () => {
     search: searchTerm || undefined,
     brand: selectedBrand || undefined,
     industry: selectedIndustry || undefined,
-    published: showPublishedOnly,
-  }), [searchTerm, selectedBrand, selectedIndustry, showPublishedOnly]);
+    published: showDrafts ? undefined : true, // Show published by default, all if drafts enabled
+  }), [searchTerm, selectedBrand, selectedIndustry, showDrafts]);
 
   const { products, allProducts, loading, error } = useProducts(filters);
 
@@ -58,14 +58,14 @@ const ProductsPage: React.FC = () => {
     setSearchTerm('');
     setSelectedBrand('');
     setSelectedIndustry('');
-    setShowPublishedOnly(undefined);
+    setShowDrafts(false);
   };
 
   const activeFiltersCount = [
     searchTerm,
     selectedBrand,
     selectedIndustry,
-    showPublishedOnly !== undefined ? 'published' : null
+    showDrafts ? 'drafts' : null
   ].filter(Boolean).length;
 
   if (loading) {
@@ -108,12 +108,11 @@ const ProductsPage: React.FC = () => {
             {products.length} of {allProducts.length} products
           </p>
         </div>
-        <Link to="/products/new">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-blue-600 border-blue-200">
+            Read-Only Access
+          </Badge>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -221,23 +220,26 @@ const ProductsPage: React.FC = () => {
                 </select>
               </div>
 
-              {/* Published Status Filter */}
+              {/* Show Drafts Toggle */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Status
+                  Content
                 </label>
-                <select
-                  value={showPublishedOnly === undefined ? '' : showPublishedOnly.toString()}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setShowPublishedOnly(value === '' ? undefined : value === 'true');
-                  }}
-                  className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-                >
-                  <option value="">All Status</option>
-                  <option value="true">Published Only</option>
-                  <option value="false">Drafts Only</option>
-                </select>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="showDrafts"
+                    checked={showDrafts}
+                    onChange={(e) => setShowDrafts(e.target.checked)}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="showDrafts" className="text-sm text-gray-700">
+                    Show Drafts
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {showDrafts ? 'Showing all products (published + drafts)' : 'Showing published products only'}
+                </p>
               </div>
             </div>
           </div>
