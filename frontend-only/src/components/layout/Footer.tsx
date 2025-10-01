@@ -12,11 +12,9 @@ const Footer: React.FC = () => {
           {/* Branding */}
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <img 
-                src="/forza-logo-blue.svg" 
-                alt="Forza Logo" 
-                className="h-8 w-auto"
-              />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-white">
+                <Package className="h-5 w-5" />
+              </div>
               <div>
                 <h3 className="font-bold text-gray-900">Forza Products</h3>
                 <p className="text-xs text-gray-500">Management System</p>

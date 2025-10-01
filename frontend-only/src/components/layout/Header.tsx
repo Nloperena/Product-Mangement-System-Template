@@ -51,13 +51,9 @@ const Header: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
-            <Link to="/products/new">
-              <Button size="sm" className="gap-2">
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Add Product</span>
-              </Button>
-            </Link>
-
+            <Badge variant="outline" className="text-blue-600 border-blue-200">
+              Read-Only
+            </Badge>
             <Button variant="ghost" size="sm" className="p-2">
               <Settings className="h-4 w-4" />
             </Button>

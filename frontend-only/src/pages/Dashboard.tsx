@@ -82,11 +82,9 @@ const Dashboard: React.FC = () => {
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <div className="flex-shrink-0">
-              <img 
-                src="/forza-logo-blue.svg" 
-                alt="Forza Logo" 
-                className="h-16 w-auto"
-              />
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white shadow-lg">
+                <Package className="h-10 w-10" />
+              </div>
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
@@ -99,7 +97,7 @@ const Dashboard: React.FC = () => {
               </div>
               <p className="text-gray-700">
                 Welcome to the Forza Product Management System alpha test environment. 
-                You're currently viewing a live preview of our comprehensive product catalog with full access to browse, explore, and manage product information.
+                You're currently viewing a live preview of our comprehensive product catalog with read-only access to browse and explore product information.
               </p>
             </div>
           </div>
@@ -114,12 +112,11 @@ const Dashboard: React.FC = () => {
             Overview of your Forza products management system
           </p>
         </div>
-        <Link to="/products/new">
-          <Button className="gap-2">
-            <Plus className="h-4 w-4" />
-            Add Product
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-blue-600 border-blue-200">
+            Read-Only Access
+          </Badge>
+        </div>
       </div>
 
       {/* Stats Cards */}
