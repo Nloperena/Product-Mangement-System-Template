@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { getImageUrl, getProductImageUrl } from '@/utils/formatting';
 import ImageUpload from '@/components/ui/ImageUpload';
+import ImageSkeleton from '@/components/ui/ImageSkeleton';
 import { 
   ArrowLeft, 
   Save, 
@@ -861,12 +862,14 @@ const ProductEditPage: React.FC = () => {
                         handleInputChange('image', image.filename);
                         setShowImagePicker(false);
                       }}
-                      className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden hover:ring-2 hover:ring-primary-500"
+                      className="group relative rounded-lg overflow-hidden hover:ring-2 hover:ring-primary-500"
                     >
-                      <img
+                      <ImageSkeleton
                         src={getProductImageUrl({ image: image.filename }, apiBaseUrl)}
                         alt={image.filename}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full"
+                        aspectRatio="square"
+                        objectFit="cover"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all" />
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white text-xs p-2 truncate">

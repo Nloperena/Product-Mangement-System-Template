@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/Button';
+import ImageSkeleton from '@/components/ui/ImageSkeleton';
 import { useApi } from '@/contexts/ApiContext';
 import { Upload, X, Loader2 } from 'lucide-react';
 
@@ -96,17 +97,20 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     <div className={`space-y-4 ${className}`}>
       {/* Current Image Preview */}
       {currentImage && (
-        <div className="relative">
-          <img
+        <div className="relative border rounded-lg overflow-hidden">
+          <ImageSkeleton
             src={currentImage}
             alt="Current product"
-            className="w-full h-48 object-cover rounded-lg border"
+            className="w-full"
+            aspectRatio="auto"
+            objectFit="cover"
+            containerClassName="h-48"
           />
           <Button
             type="button"
             variant="destructive"
             size="sm"
-            className="absolute top-2 right-2"
+            className="absolute top-2 right-2 z-10"
             onClick={() => onImageUpload('')}
           >
             <X className="h-4 w-4" />

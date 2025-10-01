@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import ImageSkeleton from '@/components/ui/ImageSkeleton';
 import { formatBrandName, formatIndustryName, getImageUrl, getProductImageUrl, getBrandTextColor } from '@/utils/formatting';
 import { useApi } from '@/contexts/ApiContext';
 import { Eye, Edit, ExternalLink, Package } from 'lucide-react';
@@ -47,23 +48,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onView }) =>
 
       <CardContent className="pb-3">
         {/* Product Image */}
-        <div className="aspect-video mb-4 overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
-          {product.image ? (
-            <img
-              src={imageUrl}
-              alt={product.name}
-              className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = '/placeholder-product.svg';
-              }}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-              <Package className="h-12 w-12 mb-2" />
-              <span className="text-sm">No Image</span>
-            </div>
-          )}
+        <div className="mb-4 overflow-hidden rounded-lg">
+          <ImageSkeleton
+            src={imageUrl}
+            alt={product.name}
+            className="h-full w-full transition-transform duration-200 group-hover:scale-105"
+            aspectRatio="video"
+            objectFit="contain"
+            fallbackIcon={<Package className="h-12 w-12 mb-2" />}
+            fallbackText="No Image"
+          />
         </div>
 
         {/* Description */}

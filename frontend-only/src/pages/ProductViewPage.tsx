@@ -7,6 +7,7 @@ import { useApi } from '@/contexts/ApiContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import ImageSkeleton from '@/components/ui/ImageSkeleton';
 import { formatBrandName, formatIndustryName, getImageUrl, getProductImageUrl, getBrandTextColor } from '@/utils/formatting';
 import { 
   ArrowLeft, 
@@ -160,23 +161,17 @@ const ProductViewPage: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                {product.image ? (
-                  <img
-                    src={imageUrl}
-                    alt={product.name}
-                    className="max-w-full max-h-full object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder-product.svg';
-                    }}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center text-gray-400">
-                    <Package className="h-16 w-16 mb-4" />
-                    <span>No Image Available</span>
-                  </div>
-                )}
+              <div className="overflow-hidden rounded-lg">
+                <ImageSkeleton
+                  src={imageUrl}
+                  alt={product.name}
+                  className="max-w-full max-h-full"
+                  aspectRatio="video"
+                  objectFit="contain"
+                  fallbackIcon={<Package className="h-16 w-16 mb-4" />}
+                  fallbackText="No Image Available"
+                  containerClassName="bg-gray-100"
+                />
               </div>
             </CardContent>
           </Card>
