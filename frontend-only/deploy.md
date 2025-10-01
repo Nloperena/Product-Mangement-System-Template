@@ -45,9 +45,15 @@ vercel --prod
 
 ## 🔧 Troubleshooting
 
+**"vite: command not found" error?**
+- **CRITICAL**: Make sure Root Directory is set to `frontend-only` in Vercel project settings
+- Go to Vercel Dashboard → Project Settings → General → Root Directory
+- Set it to `frontend-only` and redeploy
+
 **Build fails?**
 - Run `npm install` first
-- Check Node.js version (requires 16+)
+- Check Node.js version (requires 18+)
+- Ensure you're deploying from the `frontend-only` directory
 
 **Routing doesn't work on Vercel?**
 - The `vercel.json` file handles this automatically
