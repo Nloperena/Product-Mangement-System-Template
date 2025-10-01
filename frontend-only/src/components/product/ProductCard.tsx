@@ -4,7 +4,6 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { formatBrandName, formatIndustryName, getImageUrl, getProductImageUrl, getBrandTextColor } from '@/utils/formatting';
 import { useApi } from '@/contexts/ApiContext';
-import { useGuest } from '@/contexts/GuestContext';
 import { Eye, Edit, ExternalLink, Package } from 'lucide-react';
 import type { Product } from '@/types/product';
 
@@ -16,7 +15,6 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onView }) => {
   const { apiBaseUrl } = useApi();
-  const { isGuest } = useGuest();
   const imageUrl = getProductImageUrl(product, apiBaseUrl);
   const brandColor = getBrandTextColor(product.brand);
 
@@ -123,17 +121,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onEdit, onView }) =>
             <Eye className="h-4 w-4" />
             View
           </Button>
-          {!isGuest && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex-1 gap-2"
-              onClick={() => onEdit?.(product)}
-            >
-              <Edit className="h-4 w-4" />
-              Edit
-            </Button>
-          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-2"
+            onClick={() => onEdit?.(product)}
+          >
+            <Edit className="h-4 w-4" />
+            Edit
+          </Button>
         </div>
       </CardFooter>
     </Card>

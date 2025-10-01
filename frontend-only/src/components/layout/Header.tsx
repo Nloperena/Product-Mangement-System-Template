@@ -1,19 +1,12 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/Button';
-import { useGuest } from '@/contexts/GuestContext';
-// import ApiToggle from '@/components/ui/ApiToggle';
-import { Package, Plus, BarChart3, Settings, User, UserCheck } from 'lucide-react';
+import { Package, Plus, BarChart3, Settings } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const { userMode, setUserMode, isGuest, isAuthenticated } = useGuest();
 
   const isActive = (path: string) => location.pathname === path;
-
-  const handleModeToggle = () => {
-    setUserMode(isGuest ? 'authenticated' : 'guest');
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
@@ -58,37 +51,12 @@ const Header: React.FC = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
-            {/* <ApiToggle /> */}
-            
-            {/* User Mode Toggle */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleModeToggle}
-              className="gap-2"
-            >
-              {isGuest ? (
-                <>
-                  <User className="h-4 w-4" />
-                  <span className="hidden sm:inline">Guest Mode</span>
-                </>
-              ) : (
-                <>
-                  <UserCheck className="h-4 w-4" />
-                  <span className="hidden sm:inline">Authenticated</span>
-                </>
-              )}
-            </Button>
-
-            {/* Add Product Button - Only show for authenticated users */}
-            {isAuthenticated && (
-              <Link to="/products/new">
-                <Button size="sm" className="gap-2">
-                  <Plus className="h-4 w-4" />
-                  <span className="hidden sm:inline">Add Product</span>
-                </Button>
-              </Link>
-            )}
+            <Link to="/products/new">
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add Product</span>
+              </Button>
+            </Link>
 
             <Button variant="ghost" size="sm" className="p-2">
               <Settings className="h-4 w-4" />
