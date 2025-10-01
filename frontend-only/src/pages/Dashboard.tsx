@@ -70,10 +70,7 @@ const Dashboard: React.FC = () => {
   const totalProducts = stats?.total_products || 0;
   const totalBenefits = stats?.total_benefits || 0;
   const totalBrands = Object.keys(brandCounts).length;
-  const totalIndustries = Object.values(brandCounts).reduce(
-    (acc, brand) => acc + Object.keys(brand).length,
-    0
-  );
+  const totalIndustries = 7; // Fixed number of industries
 
   return (
     <div className="space-y-8">
