@@ -28,14 +28,28 @@ const PORT = process.env['PORT'] || 5000;
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
-// CORS configuration - simplified and clean
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'http://localhost:5173',
-    process.env['FRONTEND_URL'] || 'http://localhost:3000'
-  ],
+// CORS configuration - allow all Vercel domains and localhost
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:5173',
+  'https://product-mangement-system-template-s.vercel.app', // Current Vercel domain
+  process.env['FRONTEND_URL'] || 'http://localhost:3000'
+];
+
+// Allow all Vercel preview deployments (*.vercel.app)
+const corsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow all Vercel domains
+    if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD'],
   allowedHeaders: [
@@ -45,7 +59,9 @@ app.use(cors({
     'Accept', 
     'Authorization'
   ]
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -69,6 +85,7 @@ app.use(morgan('combined'));
 app.use((req, res, next) => {
   console.log(`\n🔍 [${new Date().toISOString()}] ${req.method} ${req.url}`);
   console.log(`   Origin: ${req.headers.origin || 'No origin'}`);
+  console.log(`   User-Agent: ${req.headers['user-agent'] || 'No user-agent'}`);
   
   // Log response info once the response is finished (safer than monkey-patching)
   res.on('finish', () => {
@@ -77,6 +94,12 @@ app.use((req, res, next) => {
   });
   
   next();
+});
+
+// Handle preflight requests explicitly
+app.options('*', (req, res) => {
+  console.log(`🔄 Handling preflight request for ${req.url}`);
+  res.status(200).end();
 });
 
 // Serve product images directly from /product-images URL
@@ -123,8 +146,24 @@ async function startServer() {
     
     // Initialize ProductModel to create tables
     const { ProductModel } = require('./models/Product');
-    new ProductModel(databaseService.getDatabase());
-    console.log('Database tables initialized');
+    
+    console.log('🔍 Database type check:');
+    console.log('  DATABASE_URL exists:', !!process.env.DATABASE_URL);
+    console.log('  isPostgres():', databaseService.isPostgres());
+    
+    try {
+      if (databaseService.isPostgres()) {
+        console.log('🐘 Using PostgreSQL - initializing ProductModel without database instance');
+        new ProductModel();
+      } else {
+        console.log('📁 Using SQLite - initializing ProductModel with database instance');
+        new ProductModel(databaseService.getDatabase());
+      }
+      console.log('✅ Database tables initialized successfully');
+    } catch (error) {
+      console.error('❌ Error initializing ProductModel:', error);
+      throw error;
+    }
     
     // Start server
     app.listen(PORT, () => {
